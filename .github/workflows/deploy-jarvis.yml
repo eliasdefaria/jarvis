@@ -11,11 +11,14 @@ jobs:
     name: Jarvis
     runs-on: ubuntu-latest
     steps:
+    - name: checkout
+      uses: actions/checkout@v1
+    
     - name: executing remote ssh commands using ssh key
       uses: ./
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.KEY_ED25519 }}
         port: 22
         script: sh scripts/deployment/update_jarvis.sh
