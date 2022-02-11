@@ -10,12 +10,9 @@ jobs:
   build:
     name: Jarvis
     runs-on: ubuntu-latest
-    steps:
-    - name: checkout
-      uses: actions/checkout@v1
-    
+    steps:   
     - name: executing remote ssh commands using ssh key
-      uses: ./
+      uses: actions/checkout@v2
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USERNAME }}
