@@ -19,5 +19,6 @@ jobs:
         key: ${{ secrets.KEY_ED25519 }}
         port: 22
         script: |
-          echo "I am a dog, thanks"
-          touch Desktop/DOG.txt
+          pwd
+          ls
+          sh ./scripts/deployment/update_jarvis.sh
