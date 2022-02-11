@@ -10,12 +10,12 @@ jobs:
   build:
     name: Jarvis
     runs-on: ubuntu-latest
-    steps:
+    steps:   
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.KEY_ED25519 }}
         port: 22
         script: sh ./scripts/deployment/update_jarvis.sh
