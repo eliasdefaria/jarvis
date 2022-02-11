@@ -14,3 +14,8 @@ Run Jarvis in Production
 ```
     sh awake.sh prod
 ``
+
+Run Jarvis w/out the Server
+```
+    sh awake.sh dev no-server
+```

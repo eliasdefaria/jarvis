@@ -41,6 +41,7 @@ class Plug(Model):
         database = db
 
 def init_db():
+    print('Initializing database...')
     db.connect()
     db.drop_tables([ JarvisStatus, Device, Plug ])
     db.create_tables([ JarvisStatus, Device, Plug ])
