@@ -18,4 +18,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY_ED25519 }}
         port: 22
-        script: sh scripts/deployment/update_jarvis.sh
+        script: sh ./scripts/deployment/update_jarvis.sh
