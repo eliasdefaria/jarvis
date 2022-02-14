@@ -13,7 +13,7 @@ Run Jarvis in Development Mode:
 Run Jarvis in Production
 ```
     sh awake.sh prod
-``
+```
 
 Run Jarvis w/out the Server
 ```

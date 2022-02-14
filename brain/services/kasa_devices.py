@@ -46,10 +46,9 @@ async def lights_on(lights: List[Appliance] = [], all = False) -> None:
     print(appliances)
     for device_metadata in appliances.keys():
         [ ip, type ] = device_metadata.split('_')
-        print(type, DeviceType.Strip.value)
+
         # TODO: Add support for all device types
         if int(type) == DeviceType.Strip.value:
-            print('hey')
             strip = SmartStrip(ip)
             await strip.update()
             

@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Jarvis
-db/jarvis.db
+brain/db/jarvis.db
