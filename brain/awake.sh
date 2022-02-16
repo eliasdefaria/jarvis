@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 is_prod=$([[ $1 = 'prod' ]] && echo true || echo false);
 no_server=$([[ $2 = 'no-server' ]] && echo true || echo false);
 auth_token=$3
