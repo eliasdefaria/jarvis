@@ -5,7 +5,7 @@ ARG AUTH_TOKEN
 
 WORKDIR /brain
 
-COPY requirements.txt requirements.txt
+COPY brain/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 # Copy rest of the app
