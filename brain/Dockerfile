@@ -12,4 +12,4 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 
-RUN [ "bash", "./awake.sh" , "prod", "server", AUTH_TOKEN ]
+RUN [ "/bin/bash", "./awake.sh" , "prod", "server", AUTH_TOKEN ]
