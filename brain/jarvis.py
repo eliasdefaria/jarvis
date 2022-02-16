@@ -10,6 +10,7 @@ from services.kasa_devices import init_kasa_devices, lights_on
 # TODO: Write a test!
 
 def init_jarvis():
+    print('hi')
     init_brain()
     init_devices()
     
