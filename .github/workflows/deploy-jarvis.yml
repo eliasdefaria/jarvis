@@ -45,6 +45,7 @@ jobs:
           key: ${{ secrets.KEY_ED25519 }}
           port: 22
           script: |
+            kill -9 $(lsof -t -i:5000)
             cd Desktop
             rm jarvis_logs.txt
             touch jarvis_logs.txt
