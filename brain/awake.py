@@ -11,8 +11,6 @@ from server import create_app
 [ DEV, PROD ] = [ 'development', 'production' ]
 TEST_AUTH_TOKEN = 'test-auth'
 
-print('got auth token', environ['AUTH_TOKEN'])
-
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--env', 
     choices=['production', 'development'], 
