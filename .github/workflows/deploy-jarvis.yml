@@ -45,7 +45,7 @@ jobs:
           key: ${{ secrets.KEY_ED25519 }}
           port: 22
           script: |
-            pkill -f awake.py
+            pkill -f awake.py || true
             
       - name: executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
