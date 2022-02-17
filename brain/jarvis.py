@@ -12,6 +12,9 @@ from services.kasa_devices import init_kasa_devices, lights_on
 def init_jarvis():
     init_brain()
     init_devices()
+
+    import os
+    print(os.environ['AUTH_TOKEN'])
     
 
 def init_brain():
