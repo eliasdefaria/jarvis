@@ -46,9 +46,11 @@ jobs:
           port: 22
           script: |
             cd Desktop
+            rm jarvis_logs.txt
+            touch jarvis_logs.txt
             rm -rf jarvis
             git clone git@github.com:eliasdefaria/jarvis.git
             cd jarvis/brain/
             export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
             python3.9 -m pip install -r requirements.txt
-            python3.9 awake.py --env production
+            python3.9 awake.py --env production > ../../jarvis_logs.txt
