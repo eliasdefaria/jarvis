@@ -44,6 +44,6 @@ jobs:
           key: ${{ secrets.KEY_ED25519 }}
           port: 22
           script: |
+            docker kill $(docker ps -q)
             docker rm $(docker ps -a -q)
             docker rmi $(docker images -q)
-            
