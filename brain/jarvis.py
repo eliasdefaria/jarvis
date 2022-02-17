@@ -10,7 +10,6 @@ from services.kasa_devices import init_kasa_devices, lights_on
 # TODO: Write a test!
 
 def init_jarvis():
-    print('hi')
     init_brain()
     init_devices()
     
@@ -27,4 +26,4 @@ def init_devices():
     asyncio.run(init_kasa_devices())
 
 if __name__ == '__main__':
-    init_jarvis()    
+    init_jarvis()

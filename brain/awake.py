@@ -29,6 +29,8 @@ parser.add_argument('--auth-token',
 
 args = parser.parse_args()
 
+print('AUTH TOKEN', args.auth_token)
+
 if args.env == PROD and args.auth_token == TEST_AUTH_TOKEN:
     sys.exit('Cannot use test authentication token in production environment')
 
