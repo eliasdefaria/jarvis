@@ -11,4 +11,6 @@ RUN pip3 install -r requirements.txt
 # Copy rest of the app
 COPY . .
 
-CMD python3 -u brain/awake.py --env production --auth-token "$AUTH_TOKEN"
+RUN echo ${AUTH_TOKEN}
+
+CMD python3 -u brain/awake.py --env production --auth-token ${AUTH_TOKEN}
