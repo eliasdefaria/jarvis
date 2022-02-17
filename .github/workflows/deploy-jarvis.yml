@@ -36,16 +36,6 @@ jobs:
       #     cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/jarvis:buildcache
       #     cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/jarvis:buildcache,mode=max
       #     build-args: AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
-      
-      - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.KEY_ED25519 }}
-          port: 22
-          script: |
-            pkill -f awake.py || true
             
       - name: executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
@@ -55,6 +45,7 @@ jobs:
           key: ${{ secrets.KEY_ED25519 }}
           port: 22
           script: |
+            kill-all python3.9
             cd Desktop
             rm jarvis_logs.txt
             touch jarvis_logs.txt
