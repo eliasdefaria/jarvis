@@ -1,4 +1,3 @@
-from mimetypes import init
 from kasa import SmartStrip, Discover, DeviceType
 from db.db import Plug, Device 
 from models.appliances import Appliance
@@ -9,7 +8,9 @@ import asyncio
 async def init_kasa_devices():
     print('Inializing connections to kasa devices...')
     devices = await Discover.discover()
+    print('have devices', devices)
     for addr, dev in devices.items():
+        print('got address', addr, dev)
         await dev.update()
         device = Device.create(
             kasa_device_id=dev.device_id,
