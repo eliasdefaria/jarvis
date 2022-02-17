@@ -52,5 +52,6 @@ jobs:
             cd jarvis/brain/
             source ./bin/activate
             export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
+            cd bin/
             pip3.9 install -r requirements.txt
             python3.9 awake.py --env production
