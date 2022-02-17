@@ -54,4 +54,4 @@ jobs:
             cd jarvis/brain/
             export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
             python3.9 -m pip install -r requirements.txt
-            nohup python3.9 awake.py --env production > ../../jarvis_logs.txt
+            nohup python3.9 awake.py --env production > ../../jarvis_logs.txt &
