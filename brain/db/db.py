@@ -1,8 +1,9 @@
 from typing import Text
 from peewee import *
+from os.path import realpath
 
 db = SqliteDatabase(
-    'db/jarvis.db',
+    realpath(__file__).replace('db.py', 'jarvis.db'),
     pragmas={
         'foreign_keys': 'on'
     }
