@@ -8,6 +8,10 @@ from services.kasa_devices import init_kasa_devices, lights_on
 # TODO: Add try / except for error handling with devices
 # TODO: Type all files 
 # TODO: Write a test!
+# TODO: Figure out logging
+# TODO: Add off functionality
+# TODO: Build voice processing
+# TODO: Research virtual environments and how to use them with deployment
 
 def init_jarvis():
     init_brain()
