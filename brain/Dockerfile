@@ -2,8 +2,7 @@
 FROM python:3.8-slim-buster
 
 ARG AUTH_TOKEN
-
-WORKDIR /brain
+ENV AUTH_TOKEN=${AUTH_TOKEN}
 
 COPY brain/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
@@ -11,6 +10,4 @@ RUN pip3 install -r requirements.txt
 # Copy rest of the app
 COPY . .
 
-RUN echo ${AUTH_TOKEN}
-
-CMD python3 -u brain/awake.py --env production --auth-token ${AUTH_TOKEN}
+CMD python3 -u brain/awake.py --env production

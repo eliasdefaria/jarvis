@@ -2,7 +2,7 @@ from typing import Text
 from peewee import *
 
 db = SqliteDatabase(
-    'brain/db/jarvis.db',
+    'db/jarvis.db',
     pragmas={
         'foreign_keys': 'on'
     }

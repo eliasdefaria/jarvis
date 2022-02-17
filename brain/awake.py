@@ -21,20 +21,14 @@ parser.add_argument('--server', dest='server', action='store_true')
 parser.add_argument('--no-server', dest='server', action='store_false')
 parser.set_defaults(server=True)
 
-parser.add_argument('--auth-token', 
-    default=TEST_AUTH_TOKEN, 
-    type=str, 
-    help='The auth token used to gate access to public server access. Should error if set to test-auth in production'
-)
-
 args = parser.parse_args()
 
-print('AUTH TOKEN', args.auth_token)
+if 'AUTH_TOKEN' not in environ:
+    if args.env == DEV:
+        environ['AUTH_TOKEN'] = TEST_AUTH_TOKEN
+    else:
+        sys.exit('Invalid auth token configuration for production server environment')    
 
-if args.env == PROD and args.auth_token == TEST_AUTH_TOKEN:
-    sys.exit('Cannot use test authentication token in production environment')
-
-environ['AUTH_TOKEN'] = args.auth_token
 environ['FLASK_ENV'] = PROD if args.env == PROD else DEV
 
 init_db()

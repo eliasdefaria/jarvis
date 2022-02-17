@@ -8,5 +8,8 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt update
 sudo apt install docker-ce
 
+# TODO: Change this to auto fill directory based on computer
+sudo chmod -R 777 /home/jarvis/.docker/
+
 # Check if docker was properly installed
 docker -v
