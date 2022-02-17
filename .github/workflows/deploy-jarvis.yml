@@ -48,19 +48,19 @@ jobs:
             pkill -f awake.py
             
       - name: executing remote ssh commands using ssh key
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.SERVER_HOST }}
-            username: ${{ secrets.SERVER_USERNAME }}
-            key: ${{ secrets.KEY_ED25519 }}
-            port: 22
-            script: |
-              cd Desktop
-              rm jarvis_logs.txt
-              touch jarvis_logs.txt
-              rm -rf jarvis
-              git clone git@github.com:eliasdefaria/jarvis.git
-              cd jarvis/brain/
-              export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
-              python3.9 -m pip install -r requirements.txt
-              python3.9 awake.py --env production > ../../jarvis_logs.txt
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.KEY_ED25519 }}
+          port: 22
+          script: |
+            cd Desktop
+            rm jarvis_logs.txt
+            touch jarvis_logs.txt
+            rm -rf jarvis
+            git clone git@github.com:eliasdefaria/jarvis.git
+            cd jarvis/brain/
+            export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
+            python3.9 -m pip install -r requirements.txt
+            python3.9 awake.py --env production > ../../jarvis_logs.txt
