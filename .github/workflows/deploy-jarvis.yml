@@ -45,11 +45,12 @@ jobs:
           key: ${{ secrets.KEY_ED25519 }}
           port: 22
           script: |
-            sudo apt install git-all
+            apt install git-all
             cd Desktop
+            rm -rf jarvis
             git clone git@github.com:eliasdefaria/jarvis.git
             cd jarvis/brain/
             source ./bin/activate
             export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
-            pip install -r requirements.txt
-            python3 awake.py --env production
+            pip3.9 install -r requirements.txt
+            python3.9 awake.py --env production
