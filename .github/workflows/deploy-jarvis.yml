@@ -47,4 +47,4 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PWD }}
             docker kill $(docker ps -q) || true && docker rm $(docker ps -a -q) || true && docker rmi $(docker images -q) || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
-            docker run -d -p 5000:8000 ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
+            docker run -d --privileged -p 5000:8000 ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
