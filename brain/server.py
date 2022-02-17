@@ -25,6 +25,7 @@ def create_app(test_config=None):
     @app.before_request
     def before_request_func():
         first_param = request.path.split('/')[1]
+        print('auth attempt', environ['AUTH_TOKEN'], first_param)
         if first_param != environ['AUTH_TOKEN'] and first_param not in unauth_routes:
             return redirect(url_for('default'))
     
