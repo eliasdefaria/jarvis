@@ -14,28 +14,27 @@ jobs:
       -
         name: Checkout 
         uses: actions/checkout@v2
-      # TODO: Figure out how to implement this with Docker
-      # -
-      #   name: Login to Docker Hub
-      #   uses: docker/login-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PWD }}
-      # -
-      #   name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v1
-      # -
-      #   name: Build and push
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: .
-      #     file: ./brain/Dockerfile
-      #     builder: ${{ steps.buildx.outputs.name }}
-      #     push: true
-      #     tags: ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
-      #     cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/jarvis:buildcache
-      #     cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/jarvis:buildcache,mode=max
-      #     build-args: AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PWD }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./brain/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/jarvis:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/jarvis:buildcache,mode=max
+          build-args: AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
             
       - name: executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
@@ -45,13 +44,7 @@ jobs:
           key: ${{ secrets.KEY_ED25519 }}
           port: 22
           script: |
-            killall python3.9
-            cd Desktop
-            rm jarvis_logs.txt
-            touch jarvis_logs.txt
-            rm -rf jarvis
-            git clone git@github.com:eliasdefaria/jarvis.git
-            cd jarvis/brain/
-            export AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}
-            python3.9 -m pip install -r requirements.txt
-            nohup python3.9 awake.py --env production > ../../jarvis_logs.txt &
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PWD }}
+            docker kill $(docker ps -q) || true && docker rm $(docker ps -a -q) || true && docker rmi $(docker images -q) || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
+            docker run -d --network host ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
