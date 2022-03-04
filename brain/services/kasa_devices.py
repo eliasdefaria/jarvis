@@ -8,9 +8,8 @@ import asyncio
 async def init_kasa_devices():
     print('Inializing connections to kasa devices...')
     devices = await Discover.discover()
-    print('have devices', devices)
+    print('FOUND DEVICES', devices)
     for addr, dev in devices.items():
-        print('got address', addr, dev)
         await dev.update()
         device = Device.create(
             kasa_device_id=dev.device_id,
@@ -34,7 +33,6 @@ async def init_kasa_devices():
 async def update_device_status() -> None:
     # Update smart plugs with new state
     for device in Device.select():
-        print(device)
         if int(device.type) == DeviceType.Strip.value:
             strip = SmartStrip(device.ip)
             await strip.update()

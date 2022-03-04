@@ -25,7 +25,6 @@ def create_app(test_config=None):
     @app.before_request
     def before_request_func():
         first_param = request.path.split('/')[1]
-        print('auth attempt', environ['AUTH_TOKEN'], first_param)
         if first_param != environ['AUTH_TOKEN'] and first_param not in unauth_routes:
             return redirect(url_for('default'))
     
@@ -46,8 +45,7 @@ def create_app(test_config=None):
             return 'Jarvis doesn\'nt know wtf is happening'
     
     @app.route('/<auth>/on/<variable>', methods=['GET'])
-    def on(auth, variable):
-        print('running on!', auth, variable)
+    def on(_, variable):
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
             asyncio.run(lights_on([], True))
