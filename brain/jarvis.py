@@ -5,6 +5,7 @@ from db.db import JarvisStatus
 from models.status import Status
 from services.kasa_devices import init_kasa_devices, lights_on
 
+# TODO: Integrate NGINX in Docker to allow for general internet access
 # TODO: Add try / except for error handling with devices
 # TODO: Type all files 
 # TODO: Write a test!
