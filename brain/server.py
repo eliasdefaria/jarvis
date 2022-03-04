@@ -3,7 +3,7 @@ from os import environ
 from distutils.log import ERROR
 from flask import Flask, request, redirect, url_for
 from db.db import JarvisStatus
-from services.kasa_devices import lights_on
+from services.kasa_devices import lights_on, lights_off
 
 from models.status import Status
 from models.appliances import Appliance
@@ -45,7 +45,7 @@ def create_app(test_config=None):
             return 'Jarvis doesn\'nt know wtf is happening'
     
     @app.route('/<auth>/on/<variable>', methods=['GET'])
-    def on(_, variable):
+    def on(auth, variable):
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
             asyncio.run(lights_on([], True))
@@ -56,7 +56,21 @@ def create_app(test_config=None):
                 Your attempt: {variable} <br>
                 Appliances I know: <strong>{", ".join(valid_appliances)}</strong>
             '''
-        return '<h1>Lights have been turned on!</h1>'
+        return '<h1 style="text-align:center;">Lights have been turned on!</h1>'
+    
+    @app.route('/<auth>/off/<variable>', methods=['GET'])
+    def off(auth, variable):
+        valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
+        if variable == 'all':
+            asyncio.run(lights_off([], True))
+        elif variable in valid_appliances:
+            asyncio.run(lights_off([variable]))
+        else:
+            return f'''Sorry sir, I couldn\'t find that appliance.<br>
+                Your attempt: {variable} <br>
+                Appliances I know: <strong>{", ".join(valid_appliances)}</strong>
+            '''
+        return '<h1 style="text-align:center;">Lights have been turned off!</h1>'
     
 
 
