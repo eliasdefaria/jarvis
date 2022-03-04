@@ -48,3 +48,4 @@ jobs:
             docker kill $(docker ps -q) || true && docker rm $(docker ps -a -q) || true && docker rmi $(docker images -q) || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
             docker run -d --network host ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
+            gnome-terminal
