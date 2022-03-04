@@ -19,3 +19,14 @@ Run Jarvis w/out the Server
 ```
     sh awake.sh dev no-server
 ```
+
+## Deployment & Logs
+
+Jarvis is deployed via Github Actions. The deployment script can be found in .github/workflows/deploy-jarvis.yml
+
+Running the server locally will produce logs in the console, but running the Docker container will produce logs in the filesystem.
+
+View logs in production
+```
+    docker logs jarvis
+```
