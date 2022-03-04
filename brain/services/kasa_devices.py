@@ -31,20 +31,31 @@ async def init_kasa_devices():
                     kasa_device_id=outlet.device_id
                 )
 
+async def update_device_status() -> None:
+    # Update smart plugs with new state
+    for device in Device.select():
+        print(device)
+        if int(device.type) == DeviceType.Strip.value:
+            strip = SmartStrip(device.ip)
+            await strip.update()
+
+            for outlet in strip.children:
+                update = Plug.update({ Plug.status: (1 if outlet.is_on else 0) }).where(Plug.kasa_device_id == outlet.device_id)
+                update.execute()
+
 async def lights_on(lights: List[Appliance] = [], all = False) -> None:
+    await update_device_status()
     appliances = {}
     for device in Device.select():
         # TODO: Remove check below once other kasa devices are integrated
-        # if 'plugs' not in device:
-        #     continue
         for plug in Plug.select().join(Device).where(Device.id == device.id):
-            print(all, plug.status, )
+            print('PLUG STATES: ', plug.name, 'on' if plug.status == 1 else 'off')
             if (plug.name in lights or all) and plug.status == Status.OFF.value:
                 device_metadata = f'{device.ip}_{device.type}'
                 if device_metadata not in appliances:
                     appliances[device_metadata] = []
                 appliances[device_metadata].append(plug)
-    print(appliances)
+
     for device_metadata in appliances.keys():
         [ ip, type ] = device_metadata.split('_')
 
