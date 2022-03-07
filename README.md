@@ -30,3 +30,15 @@ View logs in production
 ```
     docker logs jarvis
 ```
+
+In the rare case, you may also need to build and run Jarvis' docker container locally in your development environment. For this, use the commands below.
+
+Build Jarvis' Docker Image 
+```
+    docker build . -f brain/Dockerfile -t local_test --build-arg AUTH_TOKEN=hey
+```
+
+Run a Jarvis Docker Container
+```
+    docker run --rm  -p 8000:5000 local_test
+```
