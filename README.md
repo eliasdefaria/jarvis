@@ -28,7 +28,7 @@ Running the server locally will produce logs in the console, but running the Doc
 
 View logs in production
 ```
-    docker logs jarvis
+    docker logs jarvis --follow
 ```
 
 In the rare case, you may also need to build and run Jarvis' docker container locally in your development environment. For this, use the commands below.
