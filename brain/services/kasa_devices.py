@@ -5,7 +5,7 @@ from models.status import Status
 from typing import List
 import asyncio
 
-async def init_kasa_devices():
+async def init_kasa_devices() -> None:
     print('Inializing connections to kasa devices...')
     devices = await Discover.discover()
     print('FOUND DEVICES', devices)
@@ -41,8 +41,40 @@ async def update_device_status() -> None:
                 update = Plug.update({ Plug.status: (1 if outlet.is_on else 0) }).where(Plug.kasa_device_id == outlet.device_id)
                 update.execute()
 
+async def update_lights_status(status: Status, lights: List[Appliance] = [], all: bool = False) -> None:
+    await update_device_status()
+    appliances = {}
+
+    for device in Device.select():
+        # TODO: Add check for if device is smart strip here
+        for plug in Plug.select().join(Device).where(Device.id == device.id):
+            print('PLUG STATES: ', plug.name, 'on' if plug.status == 1 else 'off')
+            if (plug.name in lights or all) and plug.status == status:
+                device_metadata = f'{device.ip}_{device.type}'
+                if device_metadata not in appliances:
+                    appliances[device_metadata] = []
+                appliances[device_metadata].append(plug)
+
+    for device_metadata in appliances.keys():
+        [ ip, type ] = device_metadata.split('_')
+
+        # TODO: Add support for all device types
+        if int(type) == DeviceType.Strip.value:
+            strip = SmartStrip(ip)
+            await strip.update()
+            
+            for outlet in strip.children:
+                if (status == Status.ON.value and outlet.is_on) or (status == Status.OFF.value and outlet.is_off):
+                    continue
+                for appliance in appliances[device_metadata]:
+                    if outlet.alias == appliance.name:
+                        await outlet.turn_on() if status == Status.ON.value else await outlet.turn_off()
+                        appliance.status = status             
+
+    return
+
 # TODO: Move lights operation to higher order function
-async def lights_on(lights: List[Appliance] = [], all = False) -> None:
+async def lights_on(lights: List[Appliance] = [], all: bool = False) -> None:
     await update_device_status()
     appliances = {}
     for device in Device.select():
@@ -73,7 +105,7 @@ async def lights_on(lights: List[Appliance] = [], all = False) -> None:
 
     return
 
-async def lights_off(lights: List[Appliance] = [], all = False) -> None:
+async def lights_off(lights: List[Appliance] = [], all: bool = False) -> None:
     await update_device_status()
     appliances = {}
     for device in Device.select():
