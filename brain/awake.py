@@ -6,7 +6,7 @@ from os import environ
 from db.db import init_db
 from jarvis import init_jarvis
 from waitress import serve
-from server import create_app
+from services.server import create_app
 
 [ DEV, PROD ] = [ 'development', 'production' ]
 TEST_AUTH_TOKEN = 'test-auth'
