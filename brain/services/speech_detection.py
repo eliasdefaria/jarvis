@@ -1,18 +1,13 @@
-from multiprocessing.sharedctypes import Value
 import time
 import wave
 import os
 from collections import deque
 from typing import Deque
-from numpy import byte, record
 from enum import Enum
 
 import sounddevice as sound
 import webrtcvad
-
-
 import speech_recognition as sr 
-
 
 class RecordingState(Enum):
     RECORDING = 1
@@ -20,12 +15,13 @@ class RecordingState(Enum):
     READY_TO_PROCESS = 3
 
 class SpeechDetector:
-    def __init__(self) -> None:
+    _CHANNELS: int = 1
+    _FORMAT: str = 'int16'
+
+    def __init__(self, _SAMPLE_RATE: int = 32000, _SILENCE_LIMIT: float = 0.5, _PREV_AUDIO: float = 0.5) -> None:
         # Microphone stream config.
-        self._CHANNELS = 1
         self._SAMPLE_RATE = 32000
-        self._BLOCK_SIZE = 320
-        self._FORMAT = 'int16'
+        self._BLOCK_SIZE = _SAMPLE_RATE * 0.01
 
         self._SILENCE_LIMIT = 0.5 # Silence limit in seconds. When this time passes the
         # recording finishes and the file is decoded
@@ -49,20 +45,23 @@ class SpeechDetector:
         return f'{filename}'
 
     def decode_phrase(self, wav_file: str) -> str:
-        
-            audio_file = sr.AudioFile(wav_file)
-            r = sr.Recognizer()
-            with audio_file as source:
-                try:
-                    audio_data = r.record(source)
-                    print(r.recognize_google(audio_data))
-                except sr.UnknownValueError as err:
-                    print('Failed to find words in audio, skipping...')
+        """
+        Takes in the wav file and uses the speeech_recognition library to convert the speech into text
+        """
+        audio_file = sr.AudioFile(wav_file)
+        r = sr.Recognizer()
+        with audio_file as source:
+            try:
+                audio_data = r.record(source)
+                return r.recognize_google(audio_data)
+            except sr.UnknownValueError as _:
+                print('Failed to find words in audio, skipping...')
 
-    def run(self) -> None:
+    def run(self, fn_on_success: function) -> None:
         """
         Listens to Microphone, extracts speech phrases from it and calls speech recognition model
-        to decode the sound
+        to decode the sound. fn_on_success is called when the audio is successfully converted into
+        a text string
         """
         vad = webrtcvad.Vad(3)
         audio_to_write: bytearray = bytearray()
@@ -89,7 +88,7 @@ class SpeechDetector:
                 elif recording_state == RecordingState.POST.value:
                     recording_state = RecordingState.RECORDING.value
                     audio_to_write.extend(post_speech_audio)
-                
+            
             elif recording_state == RecordingState.RECORDING.value and len(audio_to_write) > self._SILENCE_LIMIT * self._SAMPLE_RATE:
                 recording_state = RecordingState.POST.value
             elif recording_state == RecordingState.POST.value:
@@ -106,7 +105,10 @@ class SpeechDetector:
                 output.extend(audio_to_write)
                 filename = self.write_audio_to_file(output)
 
-                self.decode_phrase(filename)
+                text = self.decode_phrase(filename)
+
+                if len(text) > 0:
+                    fn_on_success(text)
 
                 if os.path.exists(filename):
                     os.remove(filename)
