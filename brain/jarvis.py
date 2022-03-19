@@ -1,5 +1,3 @@
-import asyncio
-
 from db.db import JarvisStatus
 
 from models.status import Status
@@ -8,7 +6,6 @@ from services.executor import Executor
 from services.speech_detection import SpeechDetector
 
 # TODO: Write a test!
-# TODO: Build voice processing
 # TODO: Investigate flask secret key purpose
 
 def init_jarvis() -> None:
@@ -16,7 +13,6 @@ def init_jarvis() -> None:
     init_brain()
     init_devices(executor)
     init_ears(executor)
-    
 
 def init_brain() -> None:
     try:
@@ -28,12 +24,11 @@ def init_brain() -> None:
         print('Brain initialized... \nHello sir. Give me just a moment to check in on the house...')
     except ValueError as err:
         print('Failed to init Jarvis brain with error', err, 'Aborting...')
-        
     
     
 def init_devices(executor: Executor) -> None:
     try:
-        asyncio.run(init_kasa_devices())
+        executor.execute_command_from_fn(init_kasa_devices)
     except ValueError as err:
         print('Failed to init devices to connect to with error', err, 'Aborting...')
 

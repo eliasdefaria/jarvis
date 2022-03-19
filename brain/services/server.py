@@ -1,12 +1,13 @@
 import asyncio
 from os import environ
-from distutils.log import ERROR
 from flask import Flask, request, redirect, url_for
 from db.db import JarvisStatus
-from services.kasa_devices import lights_on, lights_off
+from services.kasa_devices import update_lights_status
 
 from models.status import Status
 from models.appliances import Appliance
+
+from typing import Union
 
 unauth_routes = ['default', 'status']
 
@@ -23,7 +24,7 @@ def create_app(test_config=None) -> Flask:
         app.config.from_mapping(test_config)
     
     @app.before_request
-    def before_request_func() -> redirect | None:
+    def before_request_func() -> Union[redirect, None]:
         first_param = request.path.split('/')[1]
         if first_param != environ['AUTH_TOKEN'] and first_param not in unauth_routes:
             return redirect(url_for('default'))
@@ -48,9 +49,9 @@ def create_app(test_config=None) -> Flask:
     def on(auth: str, variable: str) -> str:
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
-            asyncio.run(lights_on([], True))
+            asyncio.run(update_lights_status(Status.ON.value, [], True))
         elif variable in valid_appliances:
-            asyncio.run(lights_on([variable]))
+            asyncio.run(update_lights_status(Status.ON.value, [variable]))
         else:
             return f'''Sorry sir, I couldn\'t find that appliance.<br>
                 Your attempt: {variable} <br>
@@ -62,9 +63,9 @@ def create_app(test_config=None) -> Flask:
     def off(auth: str, variable: str) -> str:
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
-            asyncio.run(lights_off([], True))
+            asyncio.run(update_lights_status(Status.OFF.value, [], True))
         elif variable in valid_appliances:
-            asyncio.run(lights_off([variable]))
+            asyncio.run(update_lights_status(Status.OFF.value, [variable]))
         else:
             return f'''Sorry sir, I couldn\'t find that appliance.<br>
                 Your attempt: {variable} <br>

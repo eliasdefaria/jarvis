@@ -2,7 +2,7 @@ import time
 import wave
 import os
 from collections import deque
-from typing import Deque
+from typing import Callable, Deque
 from enum import Enum
 
 import sounddevice as sound
@@ -21,7 +21,7 @@ class SpeechDetector:
     def __init__(self, _SAMPLE_RATE: int = 32000, _SILENCE_LIMIT: float = 0.5, _PREV_AUDIO: float = 0.5) -> None:
         # Microphone stream config.
         self._SAMPLE_RATE = 32000
-        self._BLOCK_SIZE = _SAMPLE_RATE * 0.01
+        self._BLOCK_SIZE = int(_SAMPLE_RATE * 0.01)
 
         self._SILENCE_LIMIT = 0.5 # Silence limit in seconds. When this time passes the
         # recording finishes and the file is decoded
@@ -55,9 +55,14 @@ class SpeechDetector:
                 audio_data = r.record(source)
                 return r.recognize_google(audio_data)
             except sr.UnknownValueError as _:
-                print('Failed to find words in audio, skipping...')
+                if os.environ['ENV'] == 'development':
+                    print('Failed to find words in audio, skipping...')
+                return ''
 
-    def run(self, fn_on_success: function) -> None:
+    def sanitize_text(self, text: str) -> str:
+        return text.strip().lower()
+
+    def run(self, fn_on_success: Callable) -> None:
         """
         Listens to Microphone, extracts speech phrases from it and calls speech recognition model
         to decode the sound. fn_on_success is called when the audio is successfully converted into
@@ -105,11 +110,13 @@ class SpeechDetector:
                 output.extend(audio_to_write)
                 filename = self.write_audio_to_file(output)
 
-                text = self.decode_phrase(filename)
+                text = self.sanitize_text(self.decode_phrase(filename))
 
                 if len(text) > 0:
+                    if os.environ['ENV'] == 'development':
+                        print('Got Speech: ', text)
                     fn_on_success(text)
-
+                
                 if os.path.exists(filename):
                     os.remove(filename)
                 else:
