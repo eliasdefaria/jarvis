@@ -47,4 +47,4 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PWD }}
             docker kill $(docker ps -q) || true && docker rm $(docker ps -a -q) || true && docker rmi $(docker images -q) || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
-            docker run -d --network host --name --device /dev/snd jarvis ${{ secrets.DOCKER_USERNAME }}/jarvis:latest
+            docker run -d --network host --name jarvis --device /dev/snd ${{ secrets.DOCKER_USERNAME }}/jarvis:latest

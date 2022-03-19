@@ -13,3 +13,6 @@ sudo chmod -R 777 /home/jarvis/.docker/
 
 # Check if docker was properly installed
 docker -v
+
+# Allow docker socket to be run without sudo permissions
+sudo chmod 666 /var/run/docker.sock
