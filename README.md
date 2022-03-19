@@ -44,12 +44,12 @@ In the rare case, you may also need to build and run Jarvis' docker container lo
 
 Build Jarvis' Docker Image 
 ```
-    docker build . -f brain/Dockerfile -t local_test --build-arg AUTH_TOKEN=hey
+    sudo docker build . -f brain/Dockerfile -t local_test --build-arg AUTH_TOKEN=hey
 ```
 
 Run a Jarvis Docker Container
 ```
-    docker run --rm  -p 8000:5000 local_test
+    sudo docker run --rm --network host --device /dev/snd local_test
 ```
 
 View logs in test build
