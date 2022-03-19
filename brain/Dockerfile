@@ -7,7 +7,7 @@ ENV AUTH_TOKEN=${AUTH_TOKEN}
 # Install server OS dependencies
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
-        libatlas-base-dev gfortran nginx supervisor
+        libatlas-base-dev gfortran nginx supervisor libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev
 
 # Configure project for execution in Docker
 COPY brain/requirements.txt requirements.txt
