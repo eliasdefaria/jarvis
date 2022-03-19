@@ -2,3 +2,8 @@ Flask==2.0.2
 peewee==3.14.8
 python-kasa==0.4.1
 waitress==2.0.0
+pydub==0.25.1
+SpeechRecognition==3.8.1
+sounddevice==0.4.4
+numpy==1.22.3
+webrtcvad==2.0.10

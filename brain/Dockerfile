@@ -4,10 +4,13 @@ FROM python:3.8-slim-buster
 ARG AUTH_TOKEN
 ENV AUTH_TOKEN=${AUTH_TOKEN}
 
-# Install server OS dependencies
+# Install server OS dependencies and port audio requirements
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
-        libatlas-base-dev gfortran nginx supervisor
+        libatlas-base-dev gfortran nginx supervisor \
+        libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev
+
+RUN apt-get autoremove
 
 # Configure project for execution in Docker
 COPY brain/requirements.txt requirements.txt
@@ -17,7 +20,6 @@ RUN pip3 install -r requirements.txt
 RUN useradd --no-create-home nginx
 RUN rm /etc/nginx/sites-enabled/default
 RUN rm -r /root/.cache
-
 
 # Copy server config
 COPY infra/server/nginx.conf /etc/nginx/

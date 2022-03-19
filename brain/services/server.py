@@ -1,16 +1,17 @@
 import asyncio
 from os import environ
-from distutils.log import ERROR
 from flask import Flask, request, redirect, url_for
 from db.db import JarvisStatus
-from services.kasa_devices import lights_on, lights_off
+from services.kasa_devices import update_lights_status
 
 from models.status import Status
 from models.appliances import Appliance
 
+from typing import Union
+
 unauth_routes = ['default', 'status']
 
-def create_app(test_config=None):
+def create_app(test_config=None) -> Flask:
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(SECRET_KEY='dev')
@@ -23,17 +24,17 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
     
     @app.before_request
-    def before_request_func():
+    def before_request_func() -> Union[redirect, None]:
         first_param = request.path.split('/')[1]
         if first_param != environ['AUTH_TOKEN'] and first_param not in unauth_routes:
             return redirect(url_for('default'))
     
     @app.route('/default')
-    def default():
+    def default() -> str:
         return 'Nothing to see here, sir ;)'
 
     @app.route('/status')
-    def status():
+    def status() -> str:
         status = JarvisStatus.select().get().status
         if status == Status.ON.value:
             return 'Jarvis is awake'
@@ -41,16 +42,16 @@ def create_app(test_config=None):
             return 'Jarvis is asleep'
         elif status == Status.ERROR.value:
             return 'Jarvis is having issues'
-        else:
-            return 'Jarvis doesn\'nt know wtf is happening'
+        
+        return 'Jarvis doesn\'nt know wtf is happening'
     
     @app.route('/<auth>/on/<variable>', methods=['GET'])
-    def on(auth, variable):
+    def on(auth: str, variable: str) -> str:
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
-            asyncio.run(lights_on([], True))
+            asyncio.run(update_lights_status(Status.ON.value, [], True))
         elif variable in valid_appliances:
-            asyncio.run(lights_on([variable]))
+            asyncio.run(update_lights_status(Status.ON.value, [variable]))
         else:
             return f'''Sorry sir, I couldn\'t find that appliance.<br>
                 Your attempt: {variable} <br>
@@ -59,12 +60,12 @@ def create_app(test_config=None):
         return '<h1 style="text-align:center;">Lights have been turned on!</h1>'
     
     @app.route('/<auth>/off/<variable>', methods=['GET'])
-    def off(auth, variable):
+    def off(auth: str, variable: str) -> str:
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
-            asyncio.run(lights_off([], True))
+            asyncio.run(update_lights_status(Status.OFF.value, [], True))
         elif variable in valid_appliances:
-            asyncio.run(lights_off([variable]))
+            asyncio.run(update_lights_status(Status.OFF.value, [variable]))
         else:
             return f'''Sorry sir, I couldn\'t find that appliance.<br>
                 Your attempt: {variable} <br>
