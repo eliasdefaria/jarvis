@@ -70,12 +70,13 @@ async def toggle_bulb_status(status: Union[Status, None], appliance: Bulb, devic
     toggle = status == None
 
     if int(type) == DeviceType.Bulb.value:
-        bulb = SmartBulb(ip)
-        await bulb.update()
-
-        if (status == Status.ON.value and bulb.is_on and not toggle) or (status == Status.OFF.value and bulb.is_off and not toggle) or bulb.alias != appliance.name:
-                return
         try:
+            bulb = SmartBulb(ip)
+            await bulb.update()
+
+            if (status == Status.ON.value and bulb.is_on and not toggle) or (status == Status.OFF.value and bulb.is_off and not toggle) or bulb.alias != appliance.name:
+                    return
+            
             fn = None
             if toggle:
                 fn = bulb.turn_on if bulb.is_off else bulb.turn_off
