@@ -32,7 +32,7 @@ class Executor:
             'kitchen': [Appliance.KITCHEN_LIGHT.value],
             'living': [Appliance.LARGE_FLOOR_LAMP_1.value, Appliance.LARGE_FLOOR_LAMP_2.value, Appliance.LARGE_FLOOR_LAMP_3.value, Appliance.COUCH_LAMP.value],
             'bathroom': [Appliance.BATHROOM_LIGHT.value],
-            'bedroom': [Appliance.BEDROOM_LIGHT.value],
+            'bedroom': [Appliance.BEDROOM_LIGHT.value, Appliance.BEDSIDE_LAMP.value],
             'all': ['all']
         }
 
@@ -44,11 +44,11 @@ class Executor:
             Appliance.LARGE_FLOOR_LAMP_3.value, 
             Appliance.COUCH_LAMP.value
         ]
-        entertainment = [Appliance.COUCH_LAMP.value]
-        configurations = {
+
+        vibes = {
             'hanging': default_lighting,
-            'watching': entertainment,
-            'entertainment': entertainment
+            'entertainment': [Appliance.COUCH_LAMP.value],
+            'bedtime': [Appliance.BEDSIDE_LAMP.value]
         }
         if any(trigger in text for trigger in light_triggers):
             action = None
@@ -61,6 +61,11 @@ class Executor:
             for room_trigger in rooms.keys():
                 if room_trigger in text:
                     lights_to_interact_with.extend(rooms[room_trigger])
+            
+            for vibe in vibes.keys():
+                if vibe in text:
+                    self.queue.append(lambda: update_lights_status(Status.OFF.value, [], True))
+                    lights_to_interact_with.extend(vibes[vibe])
             
             interact_with_all = 'all' in text
             
@@ -91,7 +96,7 @@ class Executor:
         asyncio.run(command())
 
         if len(self.queue) > 0:
-            exec()
+            self.exec()
         else:
             self.running = False
         
