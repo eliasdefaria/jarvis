@@ -68,12 +68,16 @@ class Executor:
                     lights_to_interact_with.extend(vibes[vibe])
             
             interact_with_all = 'all' in text
+
+            if len(lights_to_interact_with) == 0 and not interact_with_all:
+                lights_to_interact_with.extend(default_lighting)
             
             print(f'Turning {lights_to_interact_with} {action}')
             self.queue.append(lambda: update_lights_status(action, lights_to_interact_with, interact_with_all))
 
-        
-        if not self.running and len(self.queue) > 0:
+        if len(self.queue) == 0:
+            print(f'Command did not trigger any actions: {text}')
+        elif not self.running:
             self.exec()
 
     def execute_command_from_fn(self, fn: Callable) -> None:
