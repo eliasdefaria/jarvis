@@ -67,9 +67,9 @@ class Executor:
                     self.queue.append(lambda: update_lights_status(Status.OFF.value, [], True))
                     lights_to_interact_with.extend(vibes[vibe])
             
-            interact_with_all = 'all' in text
+            interact_with_all = 'all' in text or (action == Status.OFF.value and len(lights_to_interact_with) == 0)
 
-            if len(lights_to_interact_with) == 0 and not interact_with_all:
+            if len(lights_to_interact_with) == 0 and not interact_with_all and action == Status.ON.value:
                 lights_to_interact_with.extend(default_lighting)
             
             print(f'Turning {lights_to_interact_with} {action}')
