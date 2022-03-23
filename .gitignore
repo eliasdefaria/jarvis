@@ -131,6 +131,9 @@ dmypy.json
 # Jarvis
 brain/db/jarvis.db
 
+# Private Parts
+infra/auth/august_access_token.json
+
 # Mac development
 .DS_Store
 */.DS_Store

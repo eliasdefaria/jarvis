@@ -7,6 +7,9 @@ from services.speech_detection import SpeechDetector
 
 # TODO: Write a test!
 # TODO: Investigate flask secret key purpose
+# TODO: Investigate if ValueError is what I should be using
+# TODO: Build out poll functionality to keep bulbs active
+# TODO: Add configurable brightness and color to bulb data structures
 
 def init_jarvis() -> None:
     executor = Executor()
