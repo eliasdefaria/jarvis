@@ -23,7 +23,7 @@ class Executor:
         #         print(f'Speech was not intended for Jarvis... Skipping text "{text}"')
         #     return
         
-        light_triggers = ['lights', 'light', 'lighting', 'way', 'lamp']
+        light_triggers = ['lights', 'light', 'lighting', 'lamp']
         on_triggers = ['on', 'give me']
         off_triggers = ['off', 'take out']
 
