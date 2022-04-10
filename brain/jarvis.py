@@ -10,6 +10,7 @@ from services.speech_detection import SpeechDetector
 # TODO: Investigate if ValueError is what I should be using
 # TODO: Build out poll functionality to keep bulbs active
 # TODO: Add configurable brightness and color to bulb data structures
+# TODO: Add step in deployment to turn all lights on for discover
 
 def init_jarvis() -> None:
     executor = Executor()
