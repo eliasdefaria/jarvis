@@ -86,7 +86,7 @@ async def toggle_bulb_status(status: Union[Status, None], appliance: Bulb, devic
             await fn(transition=1000)
             appliance.status = status             
         except SmartDeviceException as err:
-            print(f'Failed to toggle bulb status. Skipping update for {bulb.name}...', err)
+            print(f'Failed to toggle bulb status. Skipping update for {appliance.name}...', err)
 
 
 async def update_lights_status(status: Union[Status, None], lights: List[Appliance] = [], all: bool = False) -> None:
