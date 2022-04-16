@@ -11,6 +11,7 @@ from services.speech_detection import SpeechDetector
 # TODO: Build out poll functionality to keep bulbs active
 # TODO: Add configurable brightness and color to bulb data structures
 # TODO: Add step in deployment to turn all lights on for discover
+# TODO: Add max time to record a single phrase 
 
 def init_jarvis() -> None:
     executor = Executor()
