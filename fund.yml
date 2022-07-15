@@ -1,0 +1,9 @@
+treasury:
+    rootUrl: https://github.com/eliasdefaria/jarvis
+allocations:
+    - promiseUsername: mlevin
+      percentage: 20.0
+    - promiseUsername: wolfram
+      percentage: 20.0
+    - promiseUsername: elias
+      percentage: 60.0

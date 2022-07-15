@@ -1,7 +1,7 @@
 name: Jarvis Deployment
 on:
   push:
-    branches: [ main ]
+    branches: [ test ] # TODO: Re-enable this
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
