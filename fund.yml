@@ -1,7 +1,7 @@
 treasury:
     rootUrl: https://github.com/eliasdefaria/jarvis
 allocations:
-    - promiseUsername: mlevin
+    - rootUrl: https://github.com/schulte-lukas/fund-demo
       percentage: 20.0
     - promiseUsername: wolfram
       percentage: 20.0
