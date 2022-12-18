@@ -56,6 +56,9 @@ class Executor:
                 action = Status.ON.value
             elif any(off_trigger in text for off_trigger in off_triggers):
                 action = Status.OFF.value
+            else:
+                print(f'No action found in text "{text}". Aborting...')
+                return
 
             lights_to_interact_with = []
             for room_trigger in rooms.keys():
@@ -72,8 +75,9 @@ class Executor:
             if len(lights_to_interact_with) == 0 and not interact_with_all:
                 lights_to_interact_with.extend(default_lighting)
             
-            print(f'Turning {lights_to_interact_with} {action}')
+            print(f'Turning {Status(action).name} {lights_to_interact_with}')
             self.queue.append(lambda: update_lights_status(action, lights_to_interact_with, interact_with_all))
+            
 
         if len(self.queue) == 0:
             print(f'Command did not trigger any actions: {text}')

@@ -1,5 +1,4 @@
 # Jarvis
-[<img src="https://cdn.promise.xyz/img/fund-button.png" width="150rem">](https://app.promise.xyz/send?recipient=https://github.com/eliasdefaria/jarvis&amount=10)
 
 This project represents the custom-built smart home. Functionalities are currently limited to interfacing with lights, but this project aims to run all possible aspects of my home as I grow older.
 
@@ -15,12 +14,12 @@ Run Jarvis in Development Mode:
 
 Run Jarvis in Production
 ```
-    sh awake.sh --env production 
+    sh awake.py --env production 
 ```
 
 Run Jarvis w/out the Server
 ```
-    sh awake.sh --env development --no-server
+    sh awake.py --env development --no-server
 ```
 
 ### Folder Structure
