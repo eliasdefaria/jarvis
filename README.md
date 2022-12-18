@@ -1,4 +1,5 @@
-# jarvis
+# Jarvis
+
 This project represents the custom-built smart home. Functionalities are currently limited to interfacing with lights, but this project aims to run all possible aspects of my home as I grow older.
 
 ## Development
@@ -13,12 +14,12 @@ Run Jarvis in Development Mode:
 
 Run Jarvis in Production
 ```
-    sh awake.sh --env production 
+    sh awake.py --env production 
 ```
 
 Run Jarvis w/out the Server
 ```
-    sh awake.sh --env development --no-server
+    sh awake.py --env development --no-server
 ```
 
 ### Folder Structure

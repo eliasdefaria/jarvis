@@ -23,7 +23,7 @@ class SpeechDetector:
         self._SAMPLE_RATE = 32000
         self._BLOCK_SIZE = int(_SAMPLE_RATE * 0.01)
 
-        self._SILENCE_LIMIT = 0.5 # Silence limit in seconds. When this time passes the
+        self._SILENCE_LIMIT = 1.5 # Silence limit in seconds. When this time passes the
         # recording finishes and the file is decoded
 
         self._PREV_AUDIO = 0.5 # Previous audio (in seconds) to prepend. This helps to prevent 
