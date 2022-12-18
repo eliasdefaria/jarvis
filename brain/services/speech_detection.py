@@ -5,6 +5,8 @@ from collections import deque
 from typing import Callable, Deque
 from enum import Enum
 
+from services.executor import Executor
+
 import sounddevice as sound
 import webrtcvad
 import speech_recognition as sr 
@@ -19,6 +21,7 @@ class SpeechDetector:
     _FORMAT: str = 'int16'
 
     def __init__(self, _SAMPLE_RATE: int = 32000, _SILENCE_LIMIT: float = 0.5, _PREV_AUDIO: float = 0.5) -> None:
+        print('initilizing speech detector...')
         # Microphone stream config.
         self._SAMPLE_RATE = 32000
         self._BLOCK_SIZE = int(_SAMPLE_RATE * 0.01)
@@ -53,7 +56,7 @@ class SpeechDetector:
         with audio_file as source:
             try:
                 audio_data = r.record(source)
-                return r.recognize_google(audio_data)
+                return str(r.recognize_google(audio_data))
             except sr.UnknownValueError as _:
                 if os.environ['ENV'] == 'development':
                     print('Failed to find words in audio, skipping...')
@@ -73,7 +76,7 @@ class SpeechDetector:
         prev_audio: Deque[bytearray] = deque(maxlen=5)
         post_speech_audio: bytearray = bytearray()
 
-        recording_state: RecordingState = RecordingState.RECORDING.value
+        recording_state: RecordingState = RecordingState.RECORDING
 
         stream = sound.RawInputStream(
             samplerate=self._SAMPLE_RATE, 
@@ -82,26 +85,25 @@ class SpeechDetector:
             blocksize=self._BLOCK_SIZE
         )
         stream.start()
-
         while True:
             data = stream.read(self._BLOCK_SIZE)
-            raw_audio_data = data[0]
-
+            # NOTE: Steam.read returns this weird, self-defined `buffer` class which doesn't fit into the bytearray type. Runtime proves this wrong tho!
+            raw_audio_data: bytearray = data[0] # type: ignore            
             if vad.is_speech(raw_audio_data, self._SAMPLE_RATE):
-                if recording_state == RecordingState.RECORDING.value:
+                if recording_state.value == RecordingState.RECORDING.value:
                     audio_to_write.extend(raw_audio_data)
                 elif recording_state == RecordingState.POST.value:
-                    recording_state = RecordingState.RECORDING.value
+                    recording_state = RecordingState.RECORDING
                     audio_to_write.extend(post_speech_audio)
             
-            elif recording_state == RecordingState.RECORDING.value and len(audio_to_write) > self._SILENCE_LIMIT * self._SAMPLE_RATE:
-                recording_state = RecordingState.POST.value
-            elif recording_state == RecordingState.POST.value:
+            elif recording_state.value == RecordingState.RECORDING.value and len(audio_to_write) > self._SILENCE_LIMIT * self._SAMPLE_RATE:
+                recording_state = RecordingState.POST
+            elif recording_state.value == RecordingState.POST.value:
                 if len(post_speech_audio) < self._SILENCE_LIMIT * self._SAMPLE_RATE:
                     post_speech_audio.extend(raw_audio_data)
                 else:
-                    recording_state = RecordingState.READY_TO_PROCESS.value
-            elif recording_state == RecordingState.READY_TO_PROCESS.value:
+                    recording_state = RecordingState.READY_TO_PROCESS
+            elif recording_state.value == RecordingState.READY_TO_PROCESS.value:
                 print("Finished recording, writing audio file")
                 output = bytearray()
                 for audio_chunk in prev_audio:
@@ -126,7 +128,7 @@ class SpeechDetector:
                 audio_to_write = bytearray()
                 prev_audio = deque(maxlen=5)
                 post_speech_audio = bytearray()
-                recording_state = RecordingState.RECORDING.value
+                recording_state = RecordingState.RECORDING
             else:
                 if len(prev_audio) > 0:
                     prev_audio.popleft()
@@ -139,4 +141,4 @@ class SpeechDetector:
 
 if __name__ == '__main__':
     sd = SpeechDetector()
-    sd.run()
+    sd.run(Executor().execute_command_from_text)

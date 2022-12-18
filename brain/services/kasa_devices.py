@@ -1,4 +1,5 @@
 from multiprocessing.sharedctypes import Value
+from peewee import SmallIntegerField
 from kasa import SmartStrip, Discover, DeviceType, SmartBulb, SmartDeviceException
 from db.db import Plug, Device, Bulb
 from models.appliances import Appliance
@@ -50,46 +51,42 @@ async def update_all_devices() -> None:
 
 async def update_device_status(device: Device) -> None:
     try:
-        if int(device.type) == DeviceType.Strip.value:
-            strip = SmartStrip(device.ip)
+        if device.type == DeviceType.Strip.value:
+            strip = SmartStrip(str(device.ip))
             await strip.update()
 
             for outlet in strip.children:
                 update = Plug.update({ Plug.status: int(outlet.is_on) }).where(Plug.kasa_device_id == outlet.device_id)
                 update.execute()
-        elif int(device.type) == DeviceType.Bulb.value:
-            bulb = SmartBulb(device.ip)
+        elif device.type == DeviceType.Bulb.value:
+            bulb = SmartBulb(str(device.ip))
             await bulb.update()
             update = Bulb.update({ Bulb.status: int(bulb.is_on) }).where(Bulb.kasa_device_id == bulb.device_id)
             update.execute()
     except SmartDeviceException as err:
         print(f'Failed to update device. Skipping update for {device.name}...', err)
 
-async def toggle_bulb_status(status: Union[Status, None], appliance: Bulb, device_metadata: str) -> None:
+async def set_bulb_status(appliance: Bulb, device_metadata: str, status: Status) -> None:
     [ ip, type ] = device_metadata.split('_')
-    toggle = status == None
 
     if int(type) == DeviceType.Bulb.value:
         try:
             bulb = SmartBulb(ip)
             await bulb.update()
 
-            if (status == Status.ON.value and bulb.is_on and not toggle) or (status == Status.OFF.value and bulb.is_off and not toggle) or bulb.alias != appliance.name:
+            if bulb.alias != appliance.name or (status.value == Status.ON.value and bulb.is_on) or (status.value == Status.OFF.value and bulb.is_off):
                     return
             
-            fn = None
-            if toggle:
-                fn = bulb.turn_on if bulb.is_off else bulb.turn_off
-            else:
-                fn = bulb.turn_on if status == Status.ON.value else bulb.turn_off
+            fn = bulb.turn_on if status.value == Status.ON.value else bulb.turn_off
 
             await fn(transition=1000)
-            appliance.status = status             
+        
+            appliance.status = status.value   
+            appliance.save()
         except SmartDeviceException as err:
-            print(f'Failed to toggle bulb status. Skipping update for {appliance.name}...', err)
-
-
-async def update_lights_status(status: Union[Status, None], lights: List[Appliance] = [], all: bool = False) -> None:
+            print(f'Failed to set bulb status. Skipping update for {appliance.name}...', err)
+    
+async def update_lights_status(status: Status, lights: List[str] = [], all: bool = False) -> None:
     appliances = {}
     for device in Device.select():
         # TODO: Add check for if device is smart strip here
@@ -98,11 +95,10 @@ async def update_lights_status(status: Union[Status, None], lights: List[Applian
             if (bulb.name in lights or all):
                 device_metadata = f'{device.ip}_{device.type}'
                 if device_metadata not in appliances:
-                    appliances[device_metadata] = []
-                appliances[device_metadata].append(bulb)
+                    appliances[device_metadata] = None
+                appliances[device_metadata] = bulb
     
-    await asyncio.gather(*[toggle_bulb_status(status, appliances[device_metadata][0], device_metadata) for device_metadata in appliances.keys()])
-
+    await asyncio.gather(*[set_bulb_status(appliances[device_metadata], device_metadata, status) for device_metadata in appliances.keys()])
 
 if __name__ == '__main__':
     asyncio.run(init_kasa_devices())

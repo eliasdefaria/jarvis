@@ -24,7 +24,7 @@ def create_app(test_config=None) -> Flask:
         app.config.from_mapping(test_config)
     
     @app.before_request
-    def before_request_func() -> Union[redirect, None]:
+    def before_request_func():
         first_param = request.path.split('/')[1]
         if first_param != environ['AUTH_TOKEN'] and first_param not in unauth_routes:
             return redirect(url_for('default'))
@@ -49,9 +49,9 @@ def create_app(test_config=None) -> Flask:
     def on(auth: str, variable: str) -> str:
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
-            asyncio.run(update_lights_status(Status.ON.value, [], True))
+            asyncio.run(update_lights_status(Status.ON, [], True))
         elif variable in valid_appliances:
-            asyncio.run(update_lights_status(Status.ON.value, [variable]))
+            asyncio.run(update_lights_status(Status.ON, [variable]))
         else:
             return f'''Sorry sir, I couldn\'t find that appliance.<br>
                 Your attempt: {variable} <br>
@@ -63,9 +63,9 @@ def create_app(test_config=None) -> Flask:
     def off(auth: str, variable: str) -> str:
         valid_appliances = ['all', *[appliance.value for appliance in Appliance]]
         if variable == 'all':
-            asyncio.run(update_lights_status(Status.OFF.value, [], True))
+            asyncio.run(update_lights_status(Status.OFF, [], True))
         elif variable in valid_appliances:
-            asyncio.run(update_lights_status(Status.OFF.value, [variable]))
+            asyncio.run(update_lights_status(Status.OFF, [variable]))
         else:
             return f'''Sorry sir, I couldn\'t find that appliance.<br>
                 Your attempt: {variable} <br>

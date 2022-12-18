@@ -5,21 +5,27 @@ This project represents the custom-built smart home. Functionalities are current
 ## Development
 Jarvis was built with python3.9, sqlite3, and Docker for deployment and VM management.
 
+First install dependencies:
+
+```
+    python3 -m pip install -r brain/requirements.txt
+```
+
 To run Jarvis, awake with by running the `awake.py` shell script
 
 Run Jarvis in Development Mode:
 ```
-    sh awake.py --env development
+    python3 awake.py --env development
 ```
 
 Run Jarvis in Production
 ```
-    sh awake.py --env production 
+    python3 awake.py --env production 
 ```
 
 Run Jarvis w/out the Server
 ```
-    sh awake.py --env development --no-server
+    python3 awake.py --env development --no-server
 ```
 
 ### Folder Structure

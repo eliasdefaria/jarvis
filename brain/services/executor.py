@@ -53,9 +53,9 @@ class Executor:
         if any(trigger in text for trigger in light_triggers):
             action = None
             if any(on_trigger in text for on_trigger in on_triggers):
-                action = Status.ON.value
+                action = Status.ON
             elif any(off_trigger in text for off_trigger in off_triggers):
-                action = Status.OFF.value
+                action = Status.OFF
             else:
                 print(f'No action found in text "{text}". Aborting...')
                 return
@@ -67,7 +67,7 @@ class Executor:
             
             for vibe in vibes.keys():
                 if vibe in text:
-                    self.queue.append(lambda: update_lights_status(Status.OFF.value, [], True))
+                    self.queue.append(lambda: update_lights_status(Status.OFF, [], True))
                     lights_to_interact_with.extend(vibes[vibe])
             
             interact_with_all = 'all' in text or (action == Status.OFF.value and len(lights_to_interact_with) == 0)
